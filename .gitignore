@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+
+# FoldX output (large binary files)
+*.pdb
+*.fxout
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# FoldX binary
+foldx_1_20270131.exe
+individual_list_batch.txt
+input_raw.txt
