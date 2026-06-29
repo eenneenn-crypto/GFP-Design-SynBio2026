@@ -1,153 +1,98 @@
-# GFP Design for 2026 SynBio Challenges
+# GFP-Design-SynBio2026
 
-**Team**: [Team Name]  
 **Track**: 2026 Protein Design in SynBio Challenges  
 **Objective**: Design 6 novel GFP sequences with high initial brightness and extreme thermal stability (72°C, 10 min)
 
 ---
 
-## 🏗 Repository Structure
+## Two Teams
+
+### Team 32-603 — Data-driven computational optimization + Literature-validated mutations
+| Seq_ID | Design | Scaffold | Strategy |
+|--------|--------|----------|----------|
+| 32-603_1 | sfGFP_Plus_v1 | sfGFP | FoldX-driven stabilization (7 mutations) |
+| 32-603_2 | amacGFP_Plus_v3_max | amacGFP | Maximum FoldX optimization (8 mutations) |
+| 32-603_3 | ppluGFP_Opt_v1_bright | ppluGFP | Ultra-stable scaffold + brightness optimization |
+| 32-603_4 | cgreGFP_Opt_v1_bright | cgreGFP | Brightest WT scaffold + brightness optimization |
+| 32-603_5 | avGFP_Superfold | avGFP | Cross-species superfolder transplant |
+| 32-603_6 | sfGFP_N39D_Frenzel | sfGFP | Literature-verified mutation (885× fluorescence at 60°C) |
+
+### Team default — Surface engineering + Progressive stabilization + Chimera design
+| Seq_ID | Design | Scaffold | Strategy |
+|--------|--------|----------|----------|
+| default_1 | sfGFP_Plus_v2_TGP | sfGFP | TGP-inspired surface charge engineering |
+| default_2 | amacGFP_Plus_v1 | amacGFP | Minimal stabilization (3 FoldX mutations) |
+| default_3 | amacGFP_Plus_v2 | amacGFP | Moderate stabilization (7 mutations) |
+| default_4 | ppluGFP_Opt_v2_surface | ppluGFP | Surface Glu engineering on ultra-stable scaffold |
+| default_5 | cgreGFP_Opt_v2 | cgreGFP | Brightness combo optimization |
+| default_6 | Chimera_sf_amac | sfGFP+amacGFP | Cross-species chimeric design |
+
+---
+
+## Repository Structure
 
 ```
 GFP-Design-SynBio2026/
-├── README.md                      # This file
-├── scripts/                        # Analysis & design scripts
-│   ├── foldx_single_mutations.py   # Run FoldX BuildModel for single mutations
-│   ├── foldx_batch_pipeline.py     # Complete FoldX pipeline for 5 templates
-│   ├── align_pdb_sequences.py      # Align PDB sequences to references
-│   ├── analyze_foldx_results.py    # Parse FoldX output & compute DG/DDG
-│   ├── design_variants.py          # Generate 6+ candidate sequences
-│   ├── check_exclusions.py         # Validate against exclusion list
-│   └── generate_report.py          # Create Excel summary report
+├── README.md
+├── submissions/
+│   ├── team_32-603/
+│   │   ├── design_sequences.csv      # 6 submission-ready sequences
+│   │   ├── design_rationale.pdf       # Design rationale document
+│   │   └── design_rationale.md        # Markdown source
+│   └── team_default/
+│       ├── design_sequences.csv      # 6 submission-ready sequences
+│       ├── design_rationale.pdf       # Design rationale document
+│       └── design_rationale.md        # Markdown source
+├── scripts/                           # Analysis & design scripts
+│   ├── foldx_single_mutations.py
+│   ├── foldx_batch_pipeline.py
+│   ├── align_pdb_sequences.py
+│   ├── analyze_foldx_results.py
+│   ├── design_variants.py
+│   ├── check_exclusions.py
+│   └── generate_report.py
 ├── data/
-│   ├── sequences/                  # Reference sequences (from official package)
-│   │   ├── sfGFP.fasta
-│   │   ├── avGFP.fasta
-│   │   ├── amacGFP.fasta
-│   │   ├── cgreGFP.fasta
-│   │   └── ppluGFP.fasta
-│   ├── pdb_download.py             # Script to download PDB files (2B3P, 2WUR, 7LG4, 2HPW, 2G6X)
-│   └── mutation_lists/             # Individual mutation files for FoldX
+│   ├── sequences/                     # Reference sequences
+│   ├── pdb_download.py
+│   └── mutation_lists/
 ├── results/
-│   ├── foldx_results.md            # FoldX single-mutation DG/DDG tables
-│   ├── design_rationale.md         # Design strategy explanation
-│   ├── final_6_sequences.csv       # 6 submission-ready sequences
-│   └── supplementary_variants.csv  # Additional candidates for testing
-├── references/                     # Key literature
-│   ├── superfolder.pdf             # Pédelacq 2006 (sfGFP)
-│   ├── TGP.pdf                     # Close 2015 (thermal green protein)
-│   ├── usGFP.pdf                   # Scott 2018 (ultra-stable GFP)
-│   └── fitness_landscape.pdf       # Sarkisyan 2016 (avGFP fitness)
-└── requirements.txt                # Python dependencies
+│   ├── GFP_design_report.xlsx        # Complete design table (12 designs)
+│   ├── foldx_results.md
+│   ├── design_rationale.md
+│   ├── final_6_sequences.csv
+│   └── supplementary_variants.csv
+├── references/                        # Key literature PDFs
+└── requirements.txt
 ```
 
-## 🔧 Environment Requirements
+## Requirements
 
-### Software
-- **Python 3.10+** with packages listed in `requirements.txt`
-- **FoldX 5.1** (http://foldxsuite.crg.eu/) — for protein stability calculations
-- **R 4.4+** (optional, for visualization)
-- **GROMACS 2025+** (optional, for MD validation)
+- Python 3.10+ with packages listed in `requirements.txt`
+- FoldX 5.1 (http://foldxsuite.crg.eu/) — for protein stability calculations
+- R 4.4+ (optional, for visualization)
+- GROMACS 2025+ (optional, for MD validation)
 
-### Python Dependencies
+## Setup
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Main packages:
-- `openpyxl` — Excel report generation
-- `requests` — PDB downloading
-- `biopython` — PDB file parsing
-- `matplotlib` — data visualization (optional)
+## Design Process
 
-## 🚀 How to Reproduce
+1. **FoldX analysis**: Single-mutation stability (ΔG/ΔΔG) across 3 templates
+2. **Data-driven brightness**: 141,572 mutation-brightness records from GFP_data.xlsx
+3. **Literature integration**: sfGFP, TGP, usGFP, StayGold references
+4. **Sequence generation**: 12 candidate designs across 5 scaffolds
+5. **Exclusion check**: All sequences validated against Exclusion_List.csv (135,415 entries)
+6. **Two-team split**: 6 sequences per team with diverse design strategies
 
-### Step 1: Download PDB Templates
-```bash
-python data/pdb_download.py
-```
+## References
 
-### Step 2: Run FoldX RepairPDB
-```bash
-cd scripts/
-# For each template PDB:
-# foldx --command=RepairPDB --pdb=2B3P.pdb
-# foldx --command=RepairPDB --pdb=2WUR_Repair.pdb
-# ...
-```
-
-### Step 3: Run Single-Mutation FoldX Analysis
-```bash
-python foldx_single_mutations.py
-```
-This:
-- Generates individual_list files for 29 mutations across 3 templates
-- Runs FoldX BuildModel (numberOfRuns=3)
-- Extracts ΔG and ΔΔG from output
-
-### Step 4: Analyze Results
-```bash
-python analyze_foldx_results.py
-```
-Produces stability ranking tables.
-
-### Step 5: Design Candidate Sequences
-```bash
-python design_variants.py
-```
-Generates 11 candidate sequences from 5 templates with:
-- Literature-based stabilizing mutations
-- FoldX-validated mutations (ΔG and ΔΔG)
-- Surface charge engineering (TGP-style)
-- Brightness-optimizing mutations (from GFP_data.xlsx)
-
-### Step 6: Generate Final Report
-```bash
-python generate_report.py
-```
-Creates Excel report with:
-- Full sequences
-- Design rationale
-- ΔG and ΔΔG values
-- Source references
-
-## 📊 Design Strategy
-
-| Template | WT_ΔG(kcal/mol) | Strategy |
-|----------|:--------------:|----------|
-| sfGFP (2B3P) | +3.40 | Add E172K + N149K + surface charge → ΔG turns negative |
-| amacGFP (7LG4) | +3.55 | 3~8 stabilizing mutations (Y39N/N149K/E172K...) → all DDG<0 |
-| avGFP (2WUR) | -2.02 | Import superfolder mutations (S30R/Y39N/F99S/M153T/V163A...) |
-| cgreGFP (2HPW) | **-26.89** | Naturally super-stable; optimize brightness only |
-| ppluGFP (2G6X) | **-49.88** | Naturally super-stable; optimize brightness only |
-
-### Key Findings
-- **amacGFP** has the most optimization potential: 11/11 tested mutations are stabilizing
-- **cgreGFP** is naturally 6× brighter than avGFP
-- **ppluGFP** is naturally the most stable (ΔG = −49.88)
-- **E172K** is the best single mutation across templates
-
-## 📚 Key References
-
-1. **Pédelacq et al. 2006** — Superfolder GFP (sfGFP)  
-   *Nat Biotechnol* 24:79-88. DOI: 10.1038/nbt1172
-
-2. **Close et al. 2015** — Thermal Green Protein (TGP)  
-   *Proteins* 83:1225-1237. DOI: 10.1002/prot.24699
-
-3. **Scott et al. 2018** — Ultra-Stable GFP (usGFP/muGFP)  
-   *Sci Rep* 8:159. DOI: 10.1038/s41598-017-18045-y
-
-4. **Sarkisyan et al. 2016** — avGFP Fitness Landscape  
-   *Nature* 533:397-401. DOI: 10.1038/nature17995
-
-5. **Sokalingam et al. 2012** — Surface Lys→Arg mutagenesis  
-   *PLoS ONE* 7:e40410. DOI: 10.1371/journal.pone.0040410
-
-## ✅ Submission Checklist
-
-- [ ] All 6 sequences within 220-250 aa
-- [ ] All start with Methionine (M)
-- [ ] No sequence in Exclusion_List.csv
-- [ ] Design rationale documented in PDF
-- [ ] Open-source code uploaded to GitHub
+1. Pédelacq et al. (2006) Nat Biotechnol 24:79-88 — Superfolder GFP
+2. Close et al. (2015) Proteins 83:1225-1237 — Thermal Green Protein (TGP)
+3. Scott et al. (2018) Sci Rep 8:159 — Ultra-Stable GFP (usGFP)
+4. Sarkisyan et al. (2016) Nature 533:397-401 — avGFP Fitness Landscape
+5. Frenzel et al. (2018) — N39D thermostability enhancement
+6. Hirano et al. (2022) Nat Biotechnol 40:1132-1142 — StayGold
+7. Zhang et al. (2024) Nat Methods 21:657-665 — mBaoJin
