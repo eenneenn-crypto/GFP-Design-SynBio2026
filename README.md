@@ -28,9 +28,6 @@
 
 ## Repository Structure
 ```
-submissions/
-  team_32-603/    - CSV + PDF design rationale
-  team_default/   - CSV + PDF design rationale
 scripts/          - Analysis & design scripts
 data/             - Reference sequences
 results/          - FoldX results, design report
